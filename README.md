@@ -13,6 +13,8 @@ Found an interesting Python or VEX code on the Internet?
 Snip it into your local repository for later use.
 All of this with a sleek keyboard interaction with the program via the venerable [dmenu](https://tools.suckless.org/dmenu/) or [rofi's](https://github.com/davatorium/rofi) powerful fuzzy search.
 
+https://github.com/ajz3d/houclip/assets/34176570/3cdc64bd-514c-4db6-b970-a44588b22d42
+
 ## Usage Instructions
 
 The program comes with a shelf tab named _Houclip_, which supplies a tool for storing operator snippets.
