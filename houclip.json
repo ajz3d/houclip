@@ -1,0 +1,12 @@
+{
+  "path": "$HOUCLIP",
+  "enable": "houdini_version == '19.5'",
+  "env": [
+    {
+      "houclip_current_version": "MANUAL"
+    },
+    {
+      "HOUCLIP": "$HOUDINI_PACKAGE_PATH/houclip"
+    }
+  ]
+}

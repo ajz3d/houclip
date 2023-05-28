@@ -1,0 +1,8 @@
+*.pyc
+/docs/*
+/venv/*
+/.flake8
+/houclip.conf
+/pylintrc
+/README.html
+/roadmap.*

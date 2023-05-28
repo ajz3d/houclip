@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="houclip" label="Houclip">
+    <memberTool name="houclip__add_op_snippet"/>
+  </toolshelf>
+
+  <tool name="houclip__add_op_snippet" label="Store OpSnippet" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA["""Add operator snippet using houclip package."""
+from houclip import snippets, clipboard, menu
+
+
+snippets.main(houdini=True)]]></script>
+  </tool>
+</shelfDocument>

@@ -1,0 +1,203 @@
+#+STARTUP: indent
+* Houclip: Store And Fetch Operator/Code Snippets
+
+Have you ever wished to create handy copies of your favorite Houdini network setups or code snippets, but felt that creating HDAs for this purpose is overkill?
+
+Wish no more, because *Houclip* makes it easy to store them in a plain-text-driven (CSV) file repository, from where you can fetch your snippets at any time.
+
+Got a nice network setup that you know you will want to use one day?
+Found an interesting Python or VEX code on the Internet?
+Snip it into your local repository for later use.
+All of this with a sleek keyboard interaction with the program via the venerable [[https://tools.suckless.org/dmenu/][dmenu]] or [[https://github.com/davatorium/rofi][rofi's]] powerful fuzzy search capabilities.
+
+DEMONSTRATION VIDEO
+
+** Usage Instructions
+The program comes with a shelf tab named *Houclip*, which supplies a tool for storing operator snippets.
+It is labelled *Store OpSnippet* and is the only way of storing operator snippets.
+
+The remainder of program's commands is available by running ~houclip_run.py~.
+Here's the full list:
+
+- ~opfetch~: fetches operator snippet from repository,
+- ~opdel~: deletes operator snippet,
+- ~codeadd~: adds contents of clipboard to repository,
+- ~codefetch~: fetches saved code snippet from repository,
+- ~codedel~: deletes code snippet from repository.
+
+There are three things to keep in mind when adding snippets of any kind:
+
+1. /Description/ is mandatory, while /tags/ are optional.
+   To skip entering tags, press ~Enter~ without providing an input.
+2. Keep /descriptions/ unique for each snippet of the same category, as they are /de facto/ unique identifiers of snippets.
+   Enforcement of unique descriptions is planned for the future.
+   Currently, if two records of the same description exist within the same category, you will only be able to fetch the first one.
+3. Tags are comma-separated.
+4. Try not to use spaces when inputting tags, because all whitespace from this field will be stripped.
+   Use underscores or dashes instead, for example: ~foo,bar,faz_baz~.
+
+*** First run
+On its first run, when started either from Houdini or with ~houclip_run.py~, the program will create a config file in houclip package's root directory:
+
+#+begin_src
+$HOUDINI_USER_PREF_DIR/packages/houclip/houclip.conf
+#+end_src
+
+You can read more information about each configuration option [[*Configuring Houclip][later on]] in this document.
+
+The program will also initialize file hierarchy of its snippet repository.
+This location defaults to ~$HOME/.local/share/houclip~, but can be changed in the config file.
+
+*** Storing operator snippets
+To save a network setup in Houdini, simply select nodes that you want to store and either click the "Store OpSnippet" tool on Houclip shelf, or press a designated hotkey if you have configured it earlier.
+A menu will prompt you for a mandatory snippet description.
+It can be a string of any length.
+Then, the program will ask for a list of optional comma-separated tags.
+With that done, your snippet will be automatically stored in Houclip repository and will be available for the ~opfetch~ command.
+
+*** Fetch operator snippet (opfetch)
+This command presents you with a list of Houdini node type categories.
+Search for a category you want to browse, then search for a snippet which you want to fetch.
+Once confirm your selection, the snippet will be available for pasting into appropriate Houdini context using the standard hotkey (~CTRL+V~).
+
+*** Delete operator snippet (opdel)
+Select Houdini node type category you want to delete snippet from.
+Then, select an operator snippet to delete.
+Be advised that the snippet will be removed immediately, without any confirmation.
+
+*** Store code snippet (codeadd)
+With text to store copied to system clipboard, select language category that you want to save copied text into, then input snippet's description and (optionally) tags.
+
+*** Store code snippet (codefetch)
+Select language you want to browse and then select a snippet you want to fetch.
+The snippet will be copied to clipboard and will be ready for pasting at any time (~CTRL+V~).
+
+*** Edit snippets
+Because information about snippets is stored in plain-text files, editing a snippet is as easy as opening a CSV file with a text editor and searching for its description.
+Each line of the CSV file contains full definition of a snippet, with each field separated by a semicolon:
+
+#+begin_src csv
+description;tags;category;prefix;uuid1
+#+end_src
+
+- ~description~ :: Snippet description. Nothing more, nothing less.
+- ~tags~ :: Comma-separated tags (no whitespace allowed).
+- ~category~ :: Houdini [[https://www.sidefx.com/docs/houdini/hom/hou/NodeTypeCategory.html][node type category name]]. *Don't modify*!
+- ~prefix~ :: Original prefix of Houdini ~.cpio~ file. Empty for code snippets. *Don't modify*!
+- ~uuid1~ :: hexadecimal representation of [[https://docs.python.org/3/library/uuid.html#uuid.uuid1][uuid.uuid1]].
+
+Actual snippets are stored in subdirectories corresponding to snippet's /category/, with /uuid/ as file names.
+Operator snippets are ~.cpio~ files stored in /gzip/ compressed format.
+
+*** Sorting
+By default snippets appear on the list in the order of their creation.
+Currently, Houclip doesn't offer any type of sorting, though it is loosely planned for the future.
+For the time being, you can sort CSV files using the standard ~sort~ tool, which is available on all GNU/Linux distributions.
+
+The following example presents various ways of sorting a ~.csv~ file:
+
+#+begin_src sh
+# Choose one of sorting options.
+cat Sop.csv | sort > Sop.csv.tmp  # Sorts by description
+cat Sop.csv | sort -t ';' -k 2,2 > Sop.csv.tmp  # Sorts by tags
+cat Sop.csv | sort -t ';' -k 5,5 > Sop.csv.tmp  # Sorts by time (uuid includes time)
+# Then replace the original .csv file.
+mv Sop.csv.tmp Sop.csv
+#+end_src
+
+Some GNU/Linux users might want to automate this process with ~entr~ or a similar tool, in order to sort those files whenever they change.
+
+** Prerequisites
+- GNU/Linux --- tested on Debian Bookworm,
+- X11 --- currently no Wayland support, but I can implement ~wl-clipboard~, if someone is willing to test it,
+- Python 3 --- tested on Hython 3.9.10 and Python 3.11.2,
+- Houdini 19.5 --- might work on older versions, just make sure to use Py3 builds,
+- dmenu or rofi --- supported user interfaces,
+- xsel --- handles X11 clipboard operations,
+- libnotify4 --- used to send notifications,
+
+*** Other operating systems
+For the time being, the only supported operating system is GNU/Linux.
+The main reason behind this is simple: all of my machines are running on GNU/Linux, so I don't have capability (nor desire, to be frank) to test it on proprietary systems.
+
+However, with some modifications, notably by replacing ~/dev/shm~, ~xsel~, ~notify-send~ (and other GNU/Linux-specific commands and paths used by the package) with their MacOS counterparts, houclip might work on MacOS.
+
+I found a [[https://github.com/oNaiPs/dmenu-mac][dmenu-mac]] project, which seems to be a port of dmenu for Apple computers, so you might want to start from there.
+Adding a new menu interface to the package is just a matter of creating a new ~menu.Menu~ subclass, and then updating ~menu.MENUS~ dictionary.
+
+** Installation
+The program comes in the form of a Houdini package.
+
+Simply clone the repository into ~packages~ directory inside your Houdini user preferences path.
+Then symlink ~houclip/houclip.json~ file to ~packages~ path.
+
+If you have a ~$HOUDINI_USER_PREF_DIR~ envar present, the installation process would be as follows:
+
+#+begin_src sh
+cd $HOUDINI_USER_PREF_DIR/packages
+git clone ***
+ln -sf $HOUDINI_USER_PREF_DIR/packages/houclip/houclip.json ./houclip.json
+#+end_src
+
+You can check if the program was installed correctly, by running Houdini and adding *Houclip* shelf tab to your shelf pane.
+If it's not there, then something went wrong.
+
+** Configuring Houclip
+*** Houdini
+Houclip comes with its own shelf tab named *Houclip*.
+It contains only one tool, which allows for adding operator snippets to repository.
+For ease of access, it is recommended to add Houdini's *global hotkey* to this tool.
+I suggest *~ALT+`~* as one of the very few free hotkeys available in Houdini.
+
+*** Shell
+The rest of Houclip's functionality can be reached by running ~houclip_run.py~ and I strongly suggest to symlink this file to ~$HOME/.local/bin/houclip~, or some other path where you store executables and which is included in your ~$PATH~.
+For example:
+
+#+begin_src sh
+ln -sf $HOUDINI_USER_PREF_DIR/packages/houclip/scripts/python/houclip_run.py $HOME/.local/bin/houclip
+#+end_src
+
+However you decide to run the program, I recommend assigning it a system-wide hotkey, like *~SUPER+`~*, for instance.
+
+*** Configuration File
+Configuration file (~houclip.conf~) is created in houclip package's directory on the first run of the program.
+You can also create it yourself by copy-pasting contents of the listing below:
+
+#+begin_src conf
+# $HOUDINI_USER_PREF_DIR/packages/houclip/houclip.conf
+[PATHS]
+# Path to repository.
+repo = /home/user/.local/share/houclip
+
+[CSV]
+# Don't touch this, unless you know what you're doing.
+# If those parameters are modified when snippet repository
+# already contains saved items, things might break.
+delimiter = ;
+dialect = unix
+quoting = 0
+
+[MENU]
+# Selected user interface. "Dmenu" or "Rofi".
+# With "Rofi" you get fuzzy search and easier theming.
+menu = Dmenu
+# Menu theme, if supported. E.g. my-theme.
+theme =
+# Maximum length of snippet description and tags to be displayed in menus.
+# Anything beyond these numbers will be truncated. For example:
+#
+# This is a very long description                |foo,faz,bar,baz,hou,b
+# Well, I am an even longer description, so sto  |abc,def,ghi
+#                                             ^                       ^
+#                                        max_desc_len            max_tags_len
+#
+# These values should be tweaked to one's liking.
+max_desc_len = 128
+max_tags_len = 32
+#+end_src
+
+** Troubleshooting
+*** Something doesn't work
+All fatal errors are printed out to standard output.
+To inspect them, open ~houclip_run.py~ from your terminal.
+If you think that errors occur while adding operating snippets in Houdini, keep Houdini's /Python Shell/ tab open and inspect the output.
