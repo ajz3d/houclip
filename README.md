@@ -165,7 +165,7 @@ If you have a `$HOUDINI_USER_PREF_DIR` envar present, the installation process w
 
 ``` sh
 cd $HOUDINI_USER_PREF_DIR/packages
-git clone ***
+git clone https://github.com/ajz3d/houclip.git
 ln -sf $HOUDINI_USER_PREF_DIR/packages/houclip/houclip.json ./houclip.json
 ```
 
