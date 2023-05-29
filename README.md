@@ -89,8 +89,8 @@ With text to store copied to system clipboard, select language category that you
 Select language you want to browse and then select a snippet you want to fetch.
 The snippet will be copied to clipboard and will be ready for pasting at any time (`CTRL+V`).
 
-### Delete a code snippet (opdel)
-Select language and then a snippet to delete.
+### Delete a code snippet (codedel)
+Select a language, then a snippet to delete.
 Remember, that the program will not ask you for confirmation, so once you hit `Enter`, the snippet is gone.
 
 ### Edit a snippet
