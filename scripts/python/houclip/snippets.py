@@ -558,7 +558,7 @@ def get_snippet(categories: tuple[str] = CATEGORIES) -> None:
     menu_kwargs = {
         'theme': config.theme,
     }
-    prompt = 'Which category?'
+    prompt = messages.CAT
     category = (
         f'{config.menu.select(categories, prompt, **menu_kwargs).rstrip()}'
     )
