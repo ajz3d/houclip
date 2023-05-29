@@ -31,7 +31,7 @@ class Clipboard(ABC):
             source_file (Path): File to read from.
 
         """
-        cmd = f'xclip -sel clip < "{source_file}"'
+        cmd = f'xsel -ib < "{source_file}"'
         subprocess.run(
             cmd,
             check=True,
